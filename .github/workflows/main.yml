@@ -1,0 +1,20 @@
+name: Deploy
+
+on:
+    push:
+        tags:
+            - v*
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: dcodeIO/setup-node-nvm@master
+            - run: npm ci
+            - run: npm test
+            - uses: akhileshns/heroku-deploy@v3.8.8
+              with:
+                  heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+                  heroku_app_name: "andreev-tasks-bot"
+                  heroku_email: "vandreevwork94@gmail.com"

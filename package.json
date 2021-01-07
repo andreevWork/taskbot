@@ -1,0 +1,27 @@
+{
+    "name": "taskbot",
+    "version": "1.1.0",
+    "scripts": {
+        "test": "jest",
+        "start": "node src/index.js"
+    },
+    "author": "andreevWork",
+    "license": "ISC",
+    "jest": {
+        "setupFilesAfterEnv": ["./test/setup.js"]
+    },
+    "dependencies": {
+        "axios": "^0.19.2",
+        "body-parser": "^1.19.0",
+        "cron-parser": "^2.18.0",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "mongodb": "^3.5.9",
+        "mongoose": "^5.9.25",
+        "node-telegram-bot-api": "^0.50.0"
+    },
+    "devDependencies": {
+        "jest": "^26.6.3",
+        "prettier": "2.2.1"
+    }
+}
