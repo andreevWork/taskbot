@@ -4,9 +4,6 @@ const TelegramBotApiEmitter = new EventEmitter();
 
 class TelegramBotApi {
     static _token = process.env.TELEGRAM_BOT_TOKEN;
-
-    static currentActiveCommands = {};
-
     static _commands = {};
 
     static connect() {

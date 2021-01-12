@@ -5,10 +5,6 @@ class MongooseDocument {
     constructor(fields) {
         this.fields = fields;
     }
-
-    save() {
-        return Promise.resolve();
-    }
 }
 
 class MongooseModel {
@@ -16,16 +12,28 @@ class MongooseModel {
         this.modelName = modelName;
         this.schema = schema;
 
-        jestMocks.set(
-            `${this.modelName}ModelCreateDocument`,
-            (...args) => new MongooseDocument(...args)
+        const saveDocument = jestMocks.set(
+            `${this.modelName}ModelSaveDocument`
         );
+
+        jestMocks.set(`${this.modelName}ModelCreateDocument`, fields => {
+            const document = new MongooseDocument(fields);
+
+            document.save = saveDocument;
+
+            return document;
+        });
+
+        this.save = jestMocks.set(`${this.schemaName}ModelSaveDocument`);
 
         this.find = jestMocks.set(`${this.modelName}ModelFind`, (...args) =>
             Promise.resolve([])
         );
 
         this.updateOne = jestMocks.set(`${this.modelName}ModelUpdateOne`);
+        this.findByIdAndDelete = jestMocks.set(
+            `${this.modelName}ModelFindByIdAndDelete`
+        );
 
         for (const [key, method] of Object.entries(this.schema.statics)) {
             this.schema.statics[key] = method.bind(this);

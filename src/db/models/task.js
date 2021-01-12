@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 const TaskSchema = new mongoose.Schema({
     title: String,
-    weight: { type: Number, default: 1 },
     notification_time: Date,
     date_created: { type: Date, default: Date.now },
     date_completed: Date,
@@ -20,8 +19,8 @@ TaskSchema.statics.closeTask = function (id) {
     );
 };
 
-TaskSchema.statics.getTasks = function (id) {
-    return this.find({ chat_id: id, completed: false });
+TaskSchema.statics.getTasks = function (id, filter = {}) {
+    return this.find({ chat_id: id, completed: false, ...filter });
 };
 
 const TaskModel = mongoose.model("Task", TaskSchema);

@@ -5,11 +5,14 @@ const { Labels } = require("../src/constants/label");
 
 let TelegramBotApiClient;
 const testMessage = TEST_MESSAGES[1];
-const testTasks = [
-    { title: TEST_MESSAGES[1].text, id: 1 },
-    { title: TEST_MESSAGES[2].text, id: 2 },
-    { title: TEST_MESSAGES[3].text, id: 3 },
-];
+const testTasks = Object.entries(TEST_MESSAGES).map(
+    ([index, { text, chat }]) => ({
+        _id: index + 10,
+        title: text,
+        chat_id: chat.id,
+    })
+);
+const testTask = testTasks[0];
 
 beforeAll(async () => {
     require("../src/index");
@@ -128,7 +131,7 @@ describe("Actions on user messages", () => {
                                 text: expect.any(String),
                                 callback_data: expect.toJsonStringShapeOf({
                                     action: CallbackQueryAction.closeTask,
-                                    task_id: expect.any(Number),
+                                    task_id: expect.any(String),
                                 }),
                             }),
                         ]),
@@ -139,8 +142,8 @@ describe("Actions on user messages", () => {
     });
 
     it(`"${CallbackQueryAction.closeTask}" action from CallbackQuery`, async () => {
-        const cbId = 123;
-        const taskId = 12345;
+        const cbId = Math.floor(Math.random() * 100);
+        const taskId = testTask._id;
 
         TelegramBotApiClient._mockCallbackQueryFromUser({
             from: testMessage.chat,
@@ -168,5 +171,53 @@ describe("Actions on user messages", () => {
                 completed: true,
             }
         );
+    });
+
+    it(`"one time notification`, async () => {
+        jestMocks
+            .get("TaskModelSaveDocument")
+            .mockReturnValueOnce(Promise.resolve(testTask));
+
+        jestMocks
+            .get("TaskModelFindByIdAndDelete")
+            .mockReturnValueOnce(Promise.resolve(testTask));
+
+        TelegramBotApiClient._mockMessageFromUser({
+            ...testMessage,
+            text: testMessage.text + " - 1m",
+        });
+
+        await new Promise(resolve => {
+            const DateNow = Date.now;
+
+            global.Date.now = () => -1;
+
+            setTimeout(() => {
+                expect(
+                    jestMocks.get("TaskModelFindByIdAndDelete")
+                ).not.toHaveBeenCalled();
+                expect(
+                    jestMocks.get("TelegramSendMessage")
+                ).not.toHaveBeenCalled();
+
+                global.Date.now = () => DateNow() + 1000 * 60;
+            }, 1000);
+
+            setTimeout(() => {
+                expect(
+                    jestMocks.get("TaskModelFindByIdAndDelete")
+                ).toHaveBeenLastCalledWith(testTask._id);
+
+                expect(
+                    jestMocks.get("TelegramSendMessage")
+                ).toHaveBeenLastCalledWith(
+                    testMessage.chat.id,
+                    Labels.oneTimeNotification(testTask.title),
+                    undefined
+                );
+
+                resolve();
+            }, 2000);
+        });
     });
 });

@@ -7,10 +7,5 @@ module.exports.ChatModel = mongoose.model(
         first_name: String,
         last_name: String,
         username: String,
-        notifications: [
-            {
-                cron: String,
-            },
-        ],
     })
 );
