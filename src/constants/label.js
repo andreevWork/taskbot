@@ -5,8 +5,4 @@ module.exports.Labels = {
             .map(({ title }) => `- ${title}`)
             .join("\n")}`,
     closeTaskAnswer: "Task closed",
-    removeNotificationAnswer: "Notification removed",
-    oneTimeNotification: (title, isTooLate) =>
-        (isTooLate ? "Sorry, but better late than never. " : "") +
-        `Remind you about - "${title}"`,
 };

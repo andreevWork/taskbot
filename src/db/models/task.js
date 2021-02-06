@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 const TaskSchema = new mongoose.Schema({
     title: String,
-    notification_time: Date,
     date_created: { type: Date, default: Date.now },
     date_completed: Date,
     completed: { type: Boolean, default: false },

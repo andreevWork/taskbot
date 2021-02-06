@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { ChatModel } = require("./models/chat");
 const { TaskModel } = require("./models/task");
 
-class Db {
+module.exports.Db = class Db {
     static url = process.env.DB_URL;
 
     static connect() {
@@ -16,6 +16,4 @@ class Db {
 
     static TaskModel = TaskModel;
     static ChatModel = ChatModel;
-}
-
-module.exports = Db;
+};

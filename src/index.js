@@ -1,10 +1,12 @@
 require("dotenv").config();
 
-const Db = require("./db/db");
-const TelegramBot = require("./telegramBot/telegramBot");
+const { Db } = require("./db/db");
+const { TelegramBot } = require("./telegramBot/telegramBot");
+const { TelegramBotApi } = require("./telegramBot/telegramBotApi");
 const { App } = require("./app");
 
-const app = new App(Db, TelegramBot);
+const telegramBot = new TelegramBot(Db, TelegramBotApi);
+const app = new App(Db, telegramBot);
 
 app.startBot();
 

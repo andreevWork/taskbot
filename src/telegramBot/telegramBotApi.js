@@ -2,7 +2,7 @@ const NodeTelegramBotApi = require("node-telegram-bot-api");
 const EventEmitter = require("events");
 const TelegramBotApiEmitter = new EventEmitter();
 
-class TelegramBotApi {
+module.exports.TelegramBotApi = class TelegramBotApi {
     static _token = process.env.TELEGRAM_BOT_TOKEN;
     static _commands = {};
 
@@ -59,6 +59,4 @@ class TelegramBotApi {
             commandCb(message);
         }
     }
-}
-
-module.exports = TelegramBotApi;
+};
